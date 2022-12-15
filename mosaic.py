@@ -6,7 +6,7 @@ import sys
 import numpy as np
 from PIL import Image
 from skimage import img_as_float
-from skimage.measure import compare_mse
+from skimage.metrics import mean_squared_error
 
 def shuffle_first_items(lst, i):
     if not i:
@@ -32,7 +32,7 @@ class ProgressCounter:
 def img_mse(im1, im2):
     """Calculates the root mean square error (RSME) between two images"""
     try:
-        return compare_mse(img_as_float(im1), img_as_float(im2))
+        return mean_squared_error(img_as_float(im1), img_as_float(im2))
     except ValueError:
         print(f'RMS issue, Img1: {im1.size[0]} {im1.size[1]}, Img2: {im2.size[0]} {im2.size[1]}')
         raise KeyboardInterrupt
