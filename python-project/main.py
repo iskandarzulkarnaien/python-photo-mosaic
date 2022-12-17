@@ -5,6 +5,8 @@ from source_image import SourceImage
 from tile_box import TileBox
 from utils import coords_from_middle
 
+import time
+
 def create_mosaic(source_path, target, tile_ratio=1920/800, tile_width=75, enlargement=8, reuse=True, color_mode='RGB', tile_paths=None, shuffle_first=30):
     """Forms an mosiac from an original image using the best
     tiles provided. This reads, processes, and keeps in memory
@@ -52,7 +54,10 @@ def create_mosaic(source_path, target, tile_ratio=1920/800, tile_width=75, enlar
             comparison_block = source_image.image.crop(box_crop)
 
             # Get Best Image name that matches the Orig Sector image
+
+            start_time = time.time()
             tile_match = tile_box.best_tile_from_block(comparison_block, reuse=reuse)
+            print("TILE MATCH took --- %s seconds ---" % (time.time() - start_time))
             
             # Add Best Match to Mosaic
             mosaic.add_tile(tile_match, box_crop)
@@ -66,7 +71,20 @@ def create_mosaic(source_path, target, tile_ratio=1920/800, tile_width=75, enlar
     finally:
         mosaic.save()
 
-if __name__ == '__main__':
-    filepaths = [f"images/Acadian_Flycatcher_0003_29094.jpg"]
+from os import walk
+import random
 
-    create_mosaic('bird.jpg', 'out.jpg', 1920/800, 75, 8, False, 'RGB', filepaths)
+def main():
+    folder_name = 'birds_11788'
+    filenames = next(walk(folder_name), (None, None, []))[2]  # [] if no file
+    filenames = [f'{folder_name}/{filename}' for filename in filenames]
+
+    # random.seed(123)
+    # filenames = random.sample(filenames, 1000)
+
+    start_time = time.time()
+    create_mosaic('bird.jpg', 'out.jpg', 1920/800, 75, 1, False, 'RGB', filenames)
+    print("MOSAIC CREATION took --- %s seconds ---" % (time.time() - start_time))
+
+if __name__ == '__main__':
+    main()
