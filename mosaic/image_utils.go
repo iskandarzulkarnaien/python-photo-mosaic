@@ -32,7 +32,21 @@ func resize(imageObject image.Image, widthPixels int, heightPixels int) image.Im
 	return resizedImageObject
 }
 
-func save(imageObject image.Image, outputPath string, formatType string) {
+func crop(imageObject image.Image, startX int, startY int, endX int, endY int) image.Image {
+	copiedImageObject := copyRGBA(imageObject)
+
+	croppedImageObject := copiedImageObject.SubImage(image.Rect(startX, startY, endX, endY))
+	return croppedImageObject
+}
+
+func copyRGBA(imageObject image.Image) *image.RGBA {
+	copiedImageObject := image.NewRGBA(imageObject.Bounds())
+	draw.Draw(copiedImageObject, copiedImageObject.Bounds(), imageObject, imageObject.Bounds().Min, draw.Src)
+
+	return copiedImageObject
+}
+
+func saveImageFile(imageObject image.Image, outputPath string, formatType string) {
 	// Make directory if not exists
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
 		os.MkdirAll(filepath.Dir(outputPath), os.ModePerm)
