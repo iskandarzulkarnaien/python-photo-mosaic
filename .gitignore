@@ -1,3 +1,5 @@
 bird*
 venv
 __pycache__
+*.exe
+mosaic/test_images/test_outputs
