@@ -39,6 +39,13 @@ func crop(imageObject image.Image, startX int, startY int, endX int, endY int) i
 	return croppedImageObject
 }
 
+func transformGrayScale(imageObject image.Image) image.Image {
+	greyScaleImageObject := image.NewGray(imageObject.Bounds())
+	draw.Draw(greyScaleImageObject, greyScaleImageObject.Bounds(), imageObject, imageObject.Bounds().Min, draw.Src)
+
+	return greyScaleImageObject
+}
+
 func copyRGBA(imageObject image.Image) *image.RGBA {
 	copiedImageObject := image.NewRGBA(imageObject.Bounds())
 	draw.Draw(copiedImageObject, copiedImageObject.Bounds(), imageObject, imageObject.Bounds().Min, draw.Src)

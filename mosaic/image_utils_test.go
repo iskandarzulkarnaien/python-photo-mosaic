@@ -11,7 +11,9 @@ const TEST_IMAGE_DIRECTORY = "test_images/"
 const TEST_REFERENCE_DIRECTORY = TEST_IMAGE_DIRECTORY + "test_references/"
 const TEST_OUTPUTS_DIRECTORY = TEST_IMAGE_DIRECTORY + "test_outputs/"
 
-const ORIGINAL_IMAGE_PATH = TEST_IMAGE_DIRECTORY + "original.jpg"
+const ORIGINAL_IMAGE_NAME = "original.jpg"
+
+const ORIGINAL_IMAGE_PATH = TEST_IMAGE_DIRECTORY + ORIGINAL_IMAGE_NAME
 
 func TestResize(t *testing.T) {
 	originalImageObject := openImageFile(ORIGINAL_IMAGE_PATH)
@@ -43,9 +45,9 @@ func TestResize(t *testing.T) {
 			t.Errorf("Resizing by factor %v did not return similar images", scalingFactor)
 		}
 
-		saveImageFile(resizedImageObject, TEST_OUTPUTS_DIRECTORY+fmt.Sprintf("TestResize/Resized%f.jpg", scalingFactor), "JPG")
+		saveImageFile(resizedImageObject, TEST_OUTPUTS_DIRECTORY+fmt.Sprintf("TestResize/resized%f.jpg", scalingFactor), "JPG")
 	}
-	saveImageFile(originalImageObject, TEST_OUTPUTS_DIRECTORY+"TestResize/Original.jpg", "JPG")
+	saveImageFile(originalImageObject, TEST_OUTPUTS_DIRECTORY+"TestResize/"+ORIGINAL_IMAGE_NAME, "JPG")
 }
 
 func TestCrop(t *testing.T) {
@@ -90,9 +92,23 @@ func TestCrop(t *testing.T) {
 
 		saveImageFile(croppedImageObject, TEST_OUTPUTS_DIRECTORY+croppedFileLocation, "JPG")
 	}
-	saveImageFile(originalImageObject, TEST_OUTPUTS_DIRECTORY+baseFileLocation+"/Original.jpg", "JPG")
+	saveImageFile(originalImageObject, TEST_OUTPUTS_DIRECTORY+baseFileLocation+ORIGINAL_IMAGE_NAME, "JPG")
 }
 
 func TestTransformGrayScale(t *testing.T) {
+	originalImageObject := openImageFile(ORIGINAL_IMAGE_PATH)
 
+	grayScaleImageObject := transformGrayScale(originalImageObject)
+
+	baseFileLocation := "TestTransformGrayScale/"
+	grayScaleFileName := "grayScale.jpg"
+
+	saveImageFile(grayScaleImageObject, TEST_OUTPUTS_DIRECTORY+baseFileLocation+grayScaleFileName, "JPG")
+	saveImageFile(originalImageObject, TEST_OUTPUTS_DIRECTORY+baseFileLocation+ORIGINAL_IMAGE_NAME, "JPG")
+
+	referenceImageIcon := images4.Icon(openImageFile(TEST_REFERENCE_DIRECTORY + baseFileLocation + grayScaleFileName))
+	grayScaleImageIcon := images4.Icon(openImageFile(TEST_OUTPUTS_DIRECTORY + baseFileLocation + grayScaleFileName))
+	if !images4.Similar(referenceImageIcon, grayScaleImageIcon) {
+		t.Error("GrayScale Transformation did not return similar images")
+	}
 }
